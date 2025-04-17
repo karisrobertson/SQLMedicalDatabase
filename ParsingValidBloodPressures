@@ -1,0 +1,37 @@
+use medical
+--drop table ##validbp
+--select * from ##validbp
+create table ##validbp(bpid int, encounterid int, bp varchar(10),
+	systolic int, diastolic int, controlled char)
+insert into ##validbp(bpid, encounterid, bp, systolic, diastolic, 
+	controlled)
+select x.bpid, x.encounterid, x.bp, x.systolic, x.diastolic,
+	case when cast(x.systolic as int)<140 and 
+			  cast(x.diastolic as int)<90 then 'Y' else 'N'
+	end 'Controlled'
+from (
+	select *, 
+		case when len(bp)=7 and charindex('/',bp)=4 then left(bp,3) 
+			 when len(bp)=7 and charindex('/',bp)=3 then left(bp,2)
+			 when len(bp)=6 and charindex('/',bp)=4 then left(bp,3)
+			 when len(bp)=6 and charindex('/',bp)=3 then left(bp,2)
+			 when len(bp)=5 and charindex('/',bp)=3 then left(bp,2)
+		end 'Systolic',
+		case when len(bp)=7 and charindex('/',bp)=4 then right(bp,3) 
+			 when len(bp)=7 and charindex('/',bp)=3 then right(bp,3)
+			 when len(bp)=6 and charindex('/',bp)=4 then right(bp,2)
+			 when len(bp)=6 and charindex('/',bp)=3 then right(bp,3)
+			 when len(bp)=5 and charindex('/',bp)=3 then right(bp,2)
+		end 'Diastolic'
+
+	from bloodpressure
+	where bp like '%/%'
+	and bp not like '%[A-Z,a-z]'
+	and len(bp) between 5 and 7
+	and charindex('/',bp) in (3,4)
+	and bp not like '%'+char(39)+'%'
+	and bp not like '%/%/%'
+	and bp not like'%.%'
+) x
+where cast(x.systolic as int)>cast(x.diastolic as int)
+and cast(x.systolic as int)>30 and cast(x.diastolic as int)>20
