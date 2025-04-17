@@ -24,7 +24,7 @@ Hi! I'm Karis, an aspiring data analyst with hands-on experience in SQL. I’ve 
 
 ## 📂 Projects
 
-### 📊 [Project: Medical Database]
+### 📊 [Project: JOINS/WHERE CLAUSE]
 
 - ✅ Used JOINs to connect multiple tables
 - ✅ Filtered data using WHERE and HAVING
@@ -34,7 +34,7 @@ Hi! I'm Karis, an aspiring data analyst with hands-on experience in SQL. I’ve 
 
 ---
 
-### 📈 [Project: Created Medical Database]
+### 📈 [Project: Creating Medical Database]
 **Description**: "Built a Medical Database using SQL commands and queries."
 - ✅ Created tables using `CREATE TABLE`
 - ✅ Inserted mock data using `INSERT INTO`
