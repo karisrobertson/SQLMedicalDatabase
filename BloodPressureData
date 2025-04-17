@@ -1,0 +1,54 @@
+What are the highest, lowest, and average systolic and diastolic blood pressure readings by doctor. using the average systolic and diastolic readings, which doctor(s) appear to be most successful at managing blood pressure in patients with hypertension
+
+-- Doctor: Ayala, Demi appears to be most successful at managing blood pressure in patients with hypertension
+
+select max(bp.systolic)'Highest Systolic', max(bp.diastolic)'Highest Diastolic',
+min(bp.systolic)'Lowest Systolic', min(bp.diastolic)'Lowest Diastolic', 
+avg(bp.systolic)'Average Systolic', avg(bp.diastolic)'Average Diastolic',
+d.LastName+ ', ' +d.FirstName'Doctor Name'
+from encounters e 
+join doctors d on d.DoctorID = e.DoctorID
+join ##validbp bp on bp.encounterid = e.encounterid 
+group by d.LastName+ ', ' +d.FirstName
+order by avg(bp.systolic), avg(bp.diastolic)
+
+
+What are the highest, lowest, and average systolic and diastolic blood pressure readings by facility using the average sytolic and diastolic readings, which facility appears to be most successful at managing blood pressure in patients with hypertension? 
+
+-- "Rest for the Weary" appears to be most successful at managing blood pressure in patiens with hypertension 
+
+select max(bp.systolic)'Highest Systolic', max(bp.diastolic)'Highest Diastolic', min(bp.systolic)'Lowest Systolic', min(bp.diastolic)'Lowest Diastolic', 
+avg(bp.systolic)'Average Systolic', avg(bp.diastolic)'Average Diastolic', f.name'Facility Name'
+from encounters e
+join facilities f on f.facilityid = e.facilityid 
+join ##validbp bp on bp.encounterid = e.encounterid 
+group by f.name 
+order by avg(bp.systolic), avg(bp.diastolic)
+
+What are the highest, lowest, and average systolic and diastolic blood pressure readings by medication. Using the average systolic and diastolic readings, which medications appear to be most succesful at managing blood pressure in patients with hypertension?
+
+select m.MedName'Prescription', max(bp.systolic) 'Highest Systolic', max(bp.diastolic)'Highest Diastolic',
+min(bp.systolic) 'Lowest Systolic', min(bp.diastolic) 'Lowest Diastolic',
+avg(bp.systolic) 'Average Systolic', avg(bp.diastolic) 'Average Diastolic'
+from ##validbp bp
+join encounters e on bp.encounterid= e.encounterid
+join medications m on e.patientid=m.patientid
+where m.bpmed='Y'
+group by m.medname
+order by avg(bp.systolic), avg(bp.diastolic)
+
+
+What are the highest, lowest, and average systolic and diastolic blood pressure readings by diagnosis? Using the average systolic and diastolic readings, which diagnosis appears to  be most serious?
+
+-- ICD Code I11.0 appears to be the most serious 
+ 
+select d.ICDCode'Disease', max(bp.systolic) 'Highest
+Systolic', max(bp.diastolic) 'Highest Diastolic',
+min(bp.systolic) 'Lowest Systolic',
+min(bp.diastolic) 'Lowest Diastolic', avg(bp.systolic) 'Average
+Systolic', avg(bp.diastolic) 'Average Diastolic'
+from ##validbp bp
+join encounters e on bp.encounterid=e.encounterid
+join diagnoses d on e.patientid=d.patientid
+group by d.ICDCode
+order by avg(bp.systolic) desc, avg(bp.diastolic) desc
