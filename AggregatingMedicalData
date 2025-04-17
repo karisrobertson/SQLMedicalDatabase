@@ -1,0 +1,79 @@
+
+
+Count the distinct number of patients who have controlled blood pressure from the temp table of valid bloodpressures "validbp" we are only joining those with encounters from the encounters table
+and grouping by the controlled column, which presents either a yes or no.  
+
+select bp.controlled, count(distinct e.patientid) 'Number of Patients'
+from ##validbp bp
+join encounters e on bp.encounterid=e.EncounterID
+group by bp.controlled
+
+How many individual patients have had an elevated bloodpressure AND a controlled bloodpressure 
+
+select count(distinct e.patientid)'Patients'
+from ##validbp
+join encounters e on bp.encounterid= e.encounterid 
+where bp.controlled= 'N' 
+and e.patientid in (select patientid from encounters e join ##validbp bp on
+e.encounterid=bp.encounterid where bp.controlled='Y')
+
+
+What is the most often prescribed medication
+
+select MedName, count(PatientID)'Number of Patients'
+from Medications
+group by MedName
+order by count(PatientID) desc
+
+What are the top 3 most often prescribed medication?
+
+select top 3 medname, count(distinct patientid)
+from Medications
+group by medname 
+order by count(distinct patientid)desc
+
+
+
+Return the facility and number of visits at that facility where the blood pressure was not elevated. Order the output from highest to lowest visit counts 
+
+select f.name 'Facility Name', count(e.encounterid) 'Number of Visits'
+from encounters e
+join facilities f on f.facilityid = e.facilityid
+join ##validbp bp on bp.encounterid = e.encounterid
+where bp.controlled = 'Y'
+group by f.name
+order by count(e.encounterid) desc
+
+
+
+
+Return PatientID, Patient Name(LastName, Firstname in one column), and the number of diagnoses each patient has. Order by highest to lowest diagnosis count 
+
+select p.patientid, p.lastname+ ', ' + p.firstname 'Patient Name', count(d.ICDCode)'Number of Diagnoses'
+from diagnoses d 
+join patients p on p.patientid= d.patientid 
+group by p.patientid, p.lastname+ ', ' +p.firstname
+order by count(d.ICDCode) desc
+
+Return number of patients with controlled BP by provider specialty 
+
+select count(distinct e.patientid)'Number of Patients', d.specialty'Doctor Specialty'
+from encounters e
+join doctors d on d.doctorid= e.doctorid
+join ##validbp bp on bp.encounterid = e.encounterid
+where bp.controlled = 'Y'
+group by d.specialty
+order by count(distinct e.patientid) desc
+
+
+How many individual patients have had an elevated blood pressure AND a controlled blood pressure?
+
+select count(distinct p.patientid)
+from encounters e
+join ##validbp bp on bp.encounterid = e.encounterid
+where e.patientid in bp.controlled ='N' and e.patientid in bp.controlled ='Y'
+order by count(distinct p.patientid)
+
+
+
+
